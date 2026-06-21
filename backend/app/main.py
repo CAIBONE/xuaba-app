@@ -41,11 +41,15 @@ async def health_check():
     return {"status": "ok", "version": settings.APP_VERSION}
 
 
-# 注册路由（后续添加）
-# from app.api import auth, projects, nodes, contents, quizzes, push, reports, chat
-# app.include_router(auth.router, prefix="/api/auth", tags=["认证"])
-# app.include_router(projects.router, prefix="/api/projects", tags=["项目"])
-# ...
+# 注册 API 路由
+from app.api import auth, projects, nodes, contents, quizzes, reports
+
+app.include_router(auth.router, prefix="/api/auth", tags=["认证"])
+app.include_router(projects.router, prefix="/api/projects", tags=["项目"])
+app.include_router(nodes.router, prefix="/api/nodes", tags=["知识节点"])
+app.include_router(contents.router, prefix="/api/contents", tags=["教材"])
+app.include_router(quizzes.router, prefix="/api/quizzes", tags=["测验"])
+app.include_router(reports.router, prefix="/api/reports", tags=["报表"])
 
 
 if __name__ == "__main__":

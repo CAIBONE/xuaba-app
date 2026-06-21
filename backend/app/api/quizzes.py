@@ -1,0 +1,176 @@
+"""测验 API"""
+from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.database import get_db
+from app.models.user import User
+from app.models.node import Node
+from app.models.quiz import Quiz
+from app.models.mastery_history import MasteryHistory
+from app.schemas.quiz import QuizCreate, QuizResponse, GenerateQuizRequest, SubmitQuizRequest, QuizResultResponse
+from app.api.auth import get_current_user
+
+router = APIRouter()
+
+
+@router.post("/generate", response_model=QuizResponse)
+async def generate_quiz(
+    data: GenerateQuizRequest,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    """
+    生成测验（调用 Agent）
+
+    TODO: 集成 LangChain Agent 生成测验题目
+    目前返回模拟数据
+    """
+    # 验证节点存在
+    result = await db.execute(select(Node).where(Node.id == data.node_id))
+    node = result.scalar_one_or_none()
+    if not node:
+        raise HTTPException(status_code=404, detail="节点不存在")
+
+    # 获取当前掌握度
+    mastery_before = float(node.mastery_level)
+
+    # TODO: 调用 Main Agent 生成测验
+    # TODO: 调用 Audit Agent 审计
+
+    # 模拟生成题目
+    questions = []
+    for i in range(data.question_count):
+        questions.append({
+            "type": "choice",
+            "content": f"关于{node.title}的第{i+1}个问题？",
+            "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
+            "answer": "A",
+            "explanation": "这是解析...",
+            "difficulty": "normal"
+        })
+
+    quiz = Quiz(
+        node_id=data.node_id,
+        user_id=user.id,
+        quiz_type=data.quiz_type,
+        questions=questions,
+        total_questions=len(questions),
+        mastery_before=mastery_before,
+    )
+    db.add(quiz)
+    await db.flush()
+    await db.refresh(quiz)
+    return QuizResponse.model_validate(quiz)
+
+
+@router.get("/{quiz_id}", response_model=QuizResponse)
+async def get_quiz(
+    quiz_id: int,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    """获取测验详情"""
+    result = await db.execute(
+        select(Quiz).where(Quiz.id == quiz_id, Quiz.user_id == user.id)
+    )
+    quiz = result.scalar_one_or_none()
+    if not quiz:
+        raise HTTPException(status_code=404, detail="测验不存在")
+    return QuizResponse.model_validate(quiz)
+
+
+@router.post("/{quiz_id}/submit", response_model=QuizResultResponse)
+async def submit_quiz(
+    quiz_id: int,
+    data: SubmitQuizRequest,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    """
+    提交测验答案
+
+    流程：
+    1. 验证答案正确性
+    2. 计算得分
+    3. 更新掌握度
+    4. 记录掌握度历史
+    """
+    # 获取测验
+    result = await db.execute(
+        select(Quiz).where(Quiz.id == quiz_id, Quiz.user_id == user.id)
+    )
+    quiz = result.scalar_one_or_none()
+    if not quiz:
+        raise HTTPException(status_code=404, detail="测验不存在")
+
+    if quiz.completed_at:
+        raise HTTPException(status_code=400, detail="测验已提交")
+
+    # 验证答案
+    questions = quiz.questions
+    answers_detail = []
+    correct_count = 0
+
+    for answer in data.answers:
+        q_index = answer.get("question_index", 0)
+        user_answer = answer.get("answer", "")
+
+        if q_index < len(questions):
+            correct_answer = questions[q_index].get("answer", "")
+            is_correct = user_answer.upper() == correct_answer.upper()
+            if is_correct:
+                correct_count += 1
+
+            answers_detail.append({
+                "question_index": q_index,
+                "user_answer": user_answer,
+                "correct_answer": correct_answer,
+                "is_correct": is_correct
+            })
+
+    # 计算得分
+    total_questions = len(questions)
+    score = (correct_count / total_questions * 100) if total_questions > 0 else 0
+
+    # 计算掌握度变化
+    mastery_before = float(quiz.mastery_before)
+    mastery_change = (score / 100 - mastery_before) * 0.3  # 简单算法
+    mastery_after = min(1.0, mastery_before + mastery_change)
+
+    # 更新测验记录
+    quiz.correct_count = correct_count
+    quiz.score = score
+    quiz.answers_json = {"details": answers_detail}
+    quiz.mastery_after = mastery_after
+    quiz.started_at = quiz.started_at or datetime.utcnow()
+    quiz.completed_at = datetime.utcnow()
+
+    # 更新节点掌握度
+    result = await db.execute(select(Node).where(Node.id == quiz.node_id))
+    node = result.scalar_one_or_none()
+    if node:
+        node.mastery_level = mastery_after
+
+        # 记录掌握度历史
+        history = MasteryHistory(
+            user_id=user.id,
+            node_id=quiz.node_id,
+            mastery_level=mastery_after,
+            assessment_type="quiz",
+        )
+        db.add(history)
+
+    await db.flush()
+
+    return QuizResultResponse(
+        quiz_id=quiz.id,
+        total_questions=total_questions,
+        correct_count=correct_count,
+        score=round(score, 2),
+        mastery_before=mastery_before,
+        mastery_after=round(mastery_after, 2),
+        mastery_change=round(mastery_change, 2),
+        answers_detail=answers_detail
+    )
