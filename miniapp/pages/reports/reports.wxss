@@ -1,0 +1,130 @@
+/* pages/reports/reports.wxss */
+
+.section {
+  margin-top: 30rpx;
+}
+
+.section-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 20rpx;
+}
+
+.progress-overview {
+  padding: 30rpx;
+}
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 16rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.stat-row:last-of-type {
+  border-bottom: none;
+}
+
+.stat-label {
+  font-size: 28rpx;
+  color: #666;
+}
+
+.stat-value {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #4A90E2;
+}
+
+.progress-overview .progress-bar {
+  margin-top: 20rpx;
+}
+
+/* 热力图 */
+.heatmap {
+  padding: 30rpx;
+}
+
+.heatmap-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+
+.heatmap-stats text {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.heatmap-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6rpx;
+}
+
+.heatmap-cell {
+  width: 28rpx;
+  height: 28rpx;
+  border-radius: 4rpx;
+  background: #ebedf0;
+}
+
+.heatmap-cell.level-1 {
+  background: #9be9a8;
+}
+
+.heatmap-cell.level-2 {
+  background: #40c463;
+}
+
+.heatmap-cell.level-3 {
+  background: #30a14e;
+}
+
+.heatmap-cell.level-4 {
+  background: #216e39;
+}
+
+/* 薄弱知识点 */
+.weak-nodes {
+  padding: 20rpx 30rpx;
+}
+
+.weak-node {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 0;
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.weak-node:last-child {
+  border-bottom: none;
+}
+
+.node-name {
+  flex: 1;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.mastery-bar {
+  width: 150rpx;
+  height: 12rpx;
+  background: #f0f0f0;
+  border-radius: 6rpx;
+  margin: 0 20rpx;
+  overflow: hidden;
+}
+
+.mastery-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #f5222d, #faad14);
+  border-radius: 6rpx;
+}
+
+.mastery-text {
+  font-size: 24rpx;
+  color: #999;
+  width: 80rpx;
+  text-align: right;
+}

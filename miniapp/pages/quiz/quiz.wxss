@@ -1,0 +1,117 @@
+/* pages/quiz/quiz.wxss */
+
+.quiz-header {
+  padding: 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.progress {
+  font-size: 24rpx;
+  color: #999;
+  display: block;
+  margin: 12rpx 0;
+}
+
+.question-card {
+  padding: 40rpx 30rpx;
+  margin-bottom: 120rpx;
+}
+
+.question-type {
+  font-size: 24rpx;
+  color: #4A90E2;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.question-content {
+  font-size: 32rpx;
+  color: #333;
+  display: block;
+  margin-bottom: 30rpx;
+  line-height: 1.6;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  padding: 24rpx;
+  border: 2rpx solid #eee;
+  border-radius: 12rpx;
+}
+
+.option.selected {
+  border-color: #4A90E2;
+  background: #f0f7ff;
+}
+
+.option-label {
+  width: 48rpx;
+  height: 48rpx;
+  border-radius: 50%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24rpx;
+  margin-right: 20rpx;
+}
+
+.option.selected .option-label {
+  background: #4A90E2;
+  color: #fff;
+}
+
+.option-text {
+  font-size: 28rpx;
+  color: #333;
+}
+
+.quiz-actions {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx 30rpx;
+  background: #fff;
+  box-shadow: 0 -2rpx 10rpx rgba(0,0,0,0.1);
+}
+
+.quiz-actions button {
+  flex: 1;
+}
+
+.result-card {
+  text-align: center;
+  padding: 60rpx 40rpx;
+}
+
+.result-title {
+  font-size: 36rpx;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 30rpx;
+}
+
+.result-score {
+  font-size: 48rpx;
+  color: #4A90E2;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 16rpx;
+}
+
+.result-detail {
+  font-size: 28rpx;
+  color: #666;
+  display: block;
+  margin-bottom: 40rpx;
+}

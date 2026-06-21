@@ -1,0 +1,49 @@
+<!--pages/projects/projects.wxml-->
+<view class="container">
+  <view class="header">
+    <text class="title">学习项目</text>
+    <button class="btn-small btn-primary" bindtap="createProject">+ 新建</button>
+  </view>
+
+  <!-- 项目列表 -->
+  <view class="project-list">
+    <view class="project-card card" wx:for="{{projects}}" wx:key="id" bindtap="goToDetail" data-id="{{item.id}}">
+      <view class="project-header">
+        <text class="project-subject">{{item.subject}}</text>
+        <view class="tag {{item.status === 'active' ? 'tag-info' : item.status === 'completed' ? 'tag-success' : 'tag-warning'}}">
+          {{item.status === 'active' ? '进行中' : item.status === 'completed' ? '已完成' : '已暂停'}}
+        </view>
+      </view>
+      <text class="project-goal" wx:if="{{item.goal_description}}">{{item.goal_description}}</text>
+      <view class="project-stats">
+        <view class="stat-item">
+          <text class="stat-value">{{item.tree_total_nodes || 0}}</text>
+          <text class="stat-label">知识点</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{item.tree_total_hours || 0}}h</text>
+          <text class="stat-label">预计学时</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{item.completionRate || 0}}%</text>
+          <text class="stat-label">完成度</text>
+        </view>
+      </view>
+      <view class="progress-bar" wx:if="{{item.completionRate > 0}}">
+        <view class="progress-fill" style="width: {{item.completionRate}}%"></view>
+      </view>
+    </view>
+
+    <!-- 空状态 -->
+    <view class="empty" wx:if="{{projects.length === 0 && !loading}}">
+      <text class="empty-icon">📚</text>
+      <text>还没有学习项目</text>
+      <text class="empty-tip">点击"新建"创建你的第一个学习项目</text>
+    </view>
+  </view>
+
+  <!-- 加载中 -->
+  <view class="loading" wx:if="{{loading}}">
+    <text>加载中...</text>
+  </view>
+</view>

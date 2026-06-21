@@ -1,0 +1,59 @@
+<!--pages/project-detail/project-detail.wxml-->
+<view class="container">
+  <!-- 创建模式 -->
+  <view wx:if="{{mode === 'create'}}">
+    <view class="title">创建学习项目</view>
+    <view class="form card">
+      <view class="form-item">
+        <text class="label">科目名称</text>
+        <input class="input" placeholder="如：Python 编程" value="{{subject}}" bindinput="onSubjectInput" />
+      </view>
+      <view class="form-item">
+        <text class="label">学习目标</text>
+        <textarea class="textarea" placeholder="你想达到什么目标？" value="{{goal}}" bindinput="onGoalInput" />
+      </view>
+      <view class="form-item">
+        <text class="label">目标类型</text>
+        <picker mode="selector" range="{{goalTypes}}" value="{{goalTypeIndex}}" bindchange="onGoalTypeChange">
+          <view class="picker">{{goalTypes[goalTypeIndex]}}</view>
+        </picker>
+      </view>
+      <button class="btn-primary" bindtap="createProject" disabled="{{!subject || !goal}}">创建项目</button>
+    </view>
+  </view>
+
+  <!-- 详情模式 -->
+  <view wx:else>
+    <view class="project-info card">
+      <text class="project-subject">{{project.subject}}</text>
+      <text class="project-goal">{{project.goal_description}}</text>
+      <view class="project-actions">
+        <button class="btn-primary" bindtap="goToTree">查看知识图谱</button>
+        <button class="btn-secondary" bindtap="generateContent">生成教材</button>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">学习进度</view>
+      <view class="progress-card card">
+        <view class="progress-stats">
+          <view class="stat">
+            <text class="stat-value">{{progress.completedNodes}}</text>
+            <text class="stat-label">已完成</text>
+          </view>
+          <view class="stat">
+            <text class="stat-value">{{progress.totalNodes}}</text>
+            <text class="stat-label">总节点</text>
+          </view>
+          <view class="stat">
+            <text class="stat-value">{{progress.completionRate}}%</text>
+            <text class="stat-label">完成率</text>
+          </view>
+        </view>
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{progress.completionRate}}%"></view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

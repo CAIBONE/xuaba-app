@@ -1,0 +1,22 @@
+<!--pages/content/content.wxml-->
+<view class="container">
+  <view class="content-header card">
+    <text class="title">{{content.title || '加载中...'}}</text>
+    <view class="content-meta">
+      <text>预计阅读：{{estimatedMinutes}} 分钟</text>
+      <text>字数：{{content.word_count || 0}}</text>
+    </view>
+  </view>
+
+  <view class="content-body card" wx:if="{{content.sections}}">
+    <view class="section" wx:for="{{content.sections}}" wx:key="heading">
+      <text class="section-heading">{{item.heading}}</text>
+      <rich-text nodes="{{item.content}}"></rich-text>
+    </view>
+  </view>
+
+  <view class="content-actions">
+    <button class="btn-primary" bindtap="startQuiz">开始测验</button>
+    <button class="btn-secondary" bindtap="markComplete">标记完成</button>
+  </view>
+</view>

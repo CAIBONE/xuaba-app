@@ -1,0 +1,19 @@
+<!--pages/knowledge-tree/knowledge-tree.wxml-->
+<view class="container">
+  <view class="title">知识图谱</view>
+  <view class="tree-stats card">
+    <text>共 {{nodes.length}} 个知识点，预计 {{totalHours}} 小时</text>
+  </view>
+
+  <view class="tree-list">
+    <view class="tree-node" wx:for="{{nodes}}" wx:key="id" style="padding-left: {{item.level * 40 + 20}}rpx">
+      <view class="node-content" bindtap="selectNode" data-id="{{item.id}}">
+        <view class="node-status {{item.status}}"></view>
+        <view class="node-info">
+          <text class="node-title">{{item.title}}</text>
+          <text class="node-meta">{{item.estimated_minutes}}分钟 · 掌握度 {{item.mastery_level * 100}}%</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

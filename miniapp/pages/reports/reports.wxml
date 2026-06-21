@@ -1,0 +1,57 @@
+<!--pages/reports/reports.wxml-->
+<view class="container">
+  <view class="title">学习报表</view>
+
+  <!-- 学习进度 -->
+  <view class="section">
+    <view class="section-title">学习进度</view>
+    <view class="progress-overview card">
+      <view class="stat-row">
+        <text class="stat-label">总知识点</text>
+        <text class="stat-value">{{progress.total_nodes || 0}}</text>
+      </view>
+      <view class="stat-row">
+        <text class="stat-label">已完成</text>
+        <text class="stat-value">{{progress.completed_nodes || 0}}</text>
+      </view>
+      <view class="stat-row">
+        <text class="stat-label">完成率</text>
+        <text class="stat-value">{{progress.completion_rate || 0}}%</text>
+      </view>
+      <view class="progress-bar">
+        <view class="progress-fill" style="width: {{progress.completion_rate || 0}}%"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 打卡热力图 -->
+  <view class="section">
+    <view class="section-title">学习打卡</view>
+    <view class="heatmap card">
+      <view class="heatmap-stats">
+        <text>连续学习 {{heatmap.active_days || 0}} 天</text>
+        <text>累计 {{heatmap.total_minutes || 0}} 分钟</text>
+      </view>
+      <view class="heatmap-grid">
+        <view class="heatmap-cell level-{{item.level}}" wx:for="{{heatmapDays}}" wx:key="date" title="{{item.date}}"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 薄弱知识点 -->
+  <view class="section">
+    <view class="section-title">待加强知识点</view>
+    <view class="weak-nodes card">
+      <view class="weak-node" wx:for="{{weakNodes}}" wx:key="node_id">
+        <text class="node-name">{{item.node_title}}</text>
+        <view class="mastery-bar">
+          <view class="mastery-fill" style="width: {{item.mastery_level * 100}}%"></view>
+        </view>
+        <text class="mastery-text">{{item.mastery_level * 100}}%</text>
+      </view>
+      <view class="empty" wx:if="{{weakNodes.length === 0}}">
+        <text>暂无薄弱知识点，继续保持！</text>
+      </view>
+    </view>
+  </view>
+</view>

@@ -1,0 +1,38 @@
+<!--pages/quiz/quiz.wxml-->
+<view class="container">
+  <view class="quiz-header card">
+    <text class="title">测验</text>
+    <text class="progress">第 {{currentIndex + 1}} / {{questions.length}} 题</text>
+    <view class="progress-bar">
+      <view class="progress-fill" style="width: {{(currentIndex + 1) / questions.length * 100}}%"></view>
+    </view>
+  </view>
+
+  <view class="question-card card" wx:if="{{currentQuestion}}">
+    <text class="question-type">{{currentQuestion.type === 'choice' ? '选择题' : '其他题型'}}</text>
+    <text class="question-content">{{currentQuestion.content}}</text>
+
+    <view class="options" wx:if="{{currentQuestion.type === 'choice'}}">
+      <view class="option {{selectedAnswer === index ? 'selected' : ''}}"
+            wx:for="{{currentQuestion.options}}" wx:key="*this"
+            bindtap="selectAnswer" data-index="{{index}}">
+        <text class="option-label">{{index + 1}}</text>
+        <text class="option-text">{{item}}</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="quiz-actions">
+    <button class="btn-secondary" bindtap="prevQuestion" wx:if="{{currentIndex > 0}}">上一题</button>
+    <button class="btn-primary" bindtap="nextQuestion" wx:if="{{currentIndex < questions.length - 1}}">下一题</button>
+    <button class="btn-primary" bindtap="submitQuiz" wx:if="{{currentIndex === questions.length - 1}}">提交</button>
+  </view>
+
+  <!-- 结果页 -->
+  <view class="result-card card" wx:if="{{showResult}}">
+    <text class="result-title">测验完成！</text>
+    <text class="result-score">得分：{{result.score}}</text>
+    <text class="result-detail">正确 {{result.correct_count}} / {{result.total_questions}} 题</text>
+    <button class="btn-primary" bindtap="goBack">返回</button>
+  </view>
+</view>

@@ -1,0 +1,46 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/projects/projects",
+    "pages/project-detail/project-detail",
+    "pages/knowledge-tree/knowledge-tree",
+    "pages/content/content",
+    "pages/quiz/quiz",
+    "pages/reports/reports"
+  ],
+  "window": {
+    "navigationBarBackgroundColor": "#4A90E2",
+    "navigationBarTitleText": "学吧",
+    "navigationBarTextStyle": "white",
+    "backgroundColor": "#F5F5F5"
+  },
+  "tabBar": {
+    "color": "#999999",
+    "selectedColor": "#4A90E2",
+    "backgroundColor": "#ffffff",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "images/home.png",
+        "selectedIconPath": "images/home-active.png"
+      },
+      {
+        "pagePath": "pages/projects/projects",
+        "text": "学习",
+        "iconPath": "images/study.png",
+        "selectedIconPath": "images/study-active.png"
+      },
+      {
+        "pagePath": "pages/reports/reports",
+        "text": "报表",
+        "iconPath": "images/report.png",
+        "selectedIconPath": "images/report-active.png"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

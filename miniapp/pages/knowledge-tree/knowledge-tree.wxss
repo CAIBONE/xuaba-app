@@ -1,0 +1,66 @@
+/* pages/knowledge-tree/knowledge-tree.wxss */
+
+.tree-stats {
+  padding: 20rpx 30rpx;
+  margin-bottom: 20rpx;
+}
+
+.tree-stats text {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.tree-list {
+  background: #fff;
+  border-radius: 16rpx;
+}
+
+.tree-node {
+  border-bottom: 1rpx solid #f0f0f0;
+}
+
+.tree-node:last-child {
+  border-bottom: none;
+}
+
+.node-content {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 20rpx;
+}
+
+.node-status {
+  width: 16rpx;
+  height: 16rpx;
+  border-radius: 50%;
+  margin-right: 20rpx;
+}
+
+.node-status.pending {
+  background: #ddd;
+}
+
+.node-status.in_progress {
+  background: #faad14;
+}
+
+.node-status.completed {
+  background: #52c41a;
+}
+
+.node-info {
+  flex: 1;
+}
+
+.node-title {
+  font-size: 28rpx;
+  color: #333;
+  display: block;
+}
+
+.node-meta {
+  font-size: 22rpx;
+  color: #999;
+  margin-top: 8rpx;
+  display: block;
+}
