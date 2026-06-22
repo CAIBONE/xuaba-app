@@ -1,70 +1,69 @@
-// pages/index/index.js
-const app = getApp()
-const api = require('../../utils/api')
+const app = getApp();
 
 Page({
   data: {
-    userInfo: null,
-    studyDays: 0,
-    level: 1,
-    todayTasks: []
+    projects: [],
+    loading: true
   },
 
   onLoad() {
-    this.checkLogin()
+    this.loadProjects();
   },
 
-  onShow() {
-    if (this.data.userInfo) {
-      this.loadData()
-    }
+  onPullDownRefresh() {
+    this.loadProjects().then(() => {
+      wx.stopPullDownRefresh();
+    });
   },
 
-  checkLogin() {
-    const userInfo = app.globalData.userInfo
-    if (userInfo) {
-      this.setData({ userInfo })
-      this.loadData()
-    }
-  },
-
-  async onLogin() {
-    wx.showLoading({ title: '登录中...' })
+  async loadProjects() {
     try {
-      const result = await app.login()
-      this.setData({ userInfo: result.user })
-      this.loadData()
-      wx.showToast({ title: '登录成功', icon: 'success' })
-    } catch (err) {
-      wx.showToast({ title: '登录失败', icon: 'error' })
-    } finally {
-      wx.hideLoading()
-    }
-  },
-
-  async loadData() {
-    // 加载今日任务
-    try {
-      // TODO: 从后端获取今日任务
+      const resp = await app.request({
+        url: '/api/projects',
+        method: 'GET'
+      });
       this.setData({
-        todayTasks: [],
-        studyDays: 7,
-        level: 2
-      })
-    } catch (err) {
-      console.error('加载数据失败:', err)
+        projects: resp.items || [],
+        loading: false
+      });
+    } catch (e) {
+      console.error('加载项目失败', e);
+      this.setData({ loading: false });
+      wx.showToast({ title: '加载失败', icon: 'none' });
     }
   },
 
-  goToProjects() {
-    wx.switchTab({ url: '/pages/projects/projects' })
+  createProject() {
+    wx.showModal({
+      title: '创建学习项目',
+      editable: true,
+      placeholderText: '请输入学习目标（如：中级经济师考试）',
+      success: async (res) => {
+        if (res.confirm && res.content) {
+          try {
+            await app.request({
+              url: '/api/projects',
+              method: 'POST',
+              data: {
+                subject: res.content,
+                goal_description: `学习${res.content}`,
+                goal_type: 'exam'
+              }
+            });
+            wx.showToast({ title: '创建成功', icon: 'success' });
+            this.loadProjects();
+          } catch (e) {
+            wx.showToast({ title: '创建失败', icon: 'none' });
+          }
+        }
+      }
+    });
   },
 
-  goToCreate() {
-    wx.navigateTo({ url: '/pages/project-detail/project-detail?mode=create' })
-  },
-
-  goToReports() {
-    wx.switchTab({ url: '/pages/reports/reports' })
+  goToProject(e) {
+    const id = e.currentTarget.dataset.id;
+    wx.navigateTo({
+      url: `/pages/project/project?id=${id}`
+    });
   }
-})
+});

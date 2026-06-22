@@ -1,0 +1,43 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="loading">
+    <text>加载中...</text>
+  </view>
+
+  <view wx:elif="{{project}}" class="project-detail">
+    <view class="card project-info">
+      <view class="project-title">{{project.subject}}</view>
+      <view class="project-goal">{{project.goal_description}}</view>
+      <view class="project-stats">
+        <view class="stat">
+          <text class="stat-value">{{nodes.length}}</text>
+          <text class="stat-label">知识点</text>
+        </view>
+        <view class="stat">
+          <text class="stat-value">{{project.tree_total_hours || 0}}h</text>
+          <text class="stat-label">预计学时</text>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{nodes.length === 0}}" class="card empty-tree">
+      <text>还没有知识图谱</text>
+      <view class="btn-primary {{generating ? 'disabled' : ''}}" bindtap="generateTree">
+        {{generating ? '生成中...' : '生成知识图谱'}}
+      </view>
+    </view>
+
+    <view wx:else class="card">
+      <view class="section-title">知识图谱</view>
+      <view class="node-list">
+        <view class="node-item" wx:for="{{nodes}}" wx:key="id" bindtap="goToStudy" data-id="{{item.id}}">
+          <view class="node-level">L{{item.level}}</view>
+          <view class="node-content">
+            <view class="node-title">{{item.title}}</view>
+            <view class="node-desc" wx:if="{{item.description}}">{{item.description}}</view>
+            <view class="node-meta">{{item.estimated_minutes}}分钟</view>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

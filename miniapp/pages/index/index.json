@@ -1,3 +1,4 @@
 {
-  "navigationBarTitleText": "学吧"
+  "navigationBarTitleText": "学吧 - 我的项目",
+  "enablePullDownRefresh": true
 }

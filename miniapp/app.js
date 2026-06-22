@@ -1,63 +1,54 @@
 // app.js
 App({
   onLaunch() {
-    // 检查登录状态
-    this.checkLoginStatus()
-  },
-
-  globalData: {
-    userInfo: null,
-    token: null,
-    baseUrl: 'http://localhost:8000/api'  // 开发环境
-    // baseUrl: 'https://your-domain.com/api'  // 生产环境
-  },
-
-  checkLoginStatus() {
-    const token = wx.getStorageSync('token')
-    const userInfo = wx.getStorageSync('userInfo')
-    if (token && userInfo) {
-      this.globalData.token = token
-      this.globalData.userInfo = userInfo
+    const token = wx.getStorageSync('token');
+    if (!token) {
+      this.login();
     }
   },
 
-  // 登录方法
+  globalData: {
+    baseUrl: 'http://localhost:8000',
+    token: wx.getStorageSync('token') || ''
+  },
+
   login() {
+    wx.login({
+      success: (res) => {
+        wx.request({
+          url: `${this.globalData.baseUrl}/api/auth/login`,
+          method: 'POST',
+          data: { code: res.code },
+          success: (resp) => {
+            if (resp.data.access_token) {
+              this.globalData.token = resp.data.access_token;
+              wx.setStorageSync('token', resp.data.access_token);
+            }
+          }
+        });
+      }
+    });
+  },
+
+  request(options) {
     return new Promise((resolve, reject) => {
-      wx.login({
+      wx.request({
+        ...options,
+        url: `${this.globalData.baseUrl}${options.url}`,
+        header: {
+          'Authorization': `Bearer ${this.globalData.token}`,
+          'Content-Type': 'application/json',
+          ...options.header
+        },
         success: (res) => {
-          if (res.code) {
-            wx.request({
-              url: `${this.globalData.baseUrl}/auth/login`,
-              method: 'POST',
-              data: { code: res.code },
-              success: (response) => {
-                if (response.data && response.data.access_token) {
-                  this.globalData.token = response.data.access_token
-                  this.globalData.userInfo = response.data.user
-                  wx.setStorageSync('token', response.data.access_token)
-                  wx.setStorageSync('userInfo', response.data.user)
-                  resolve(response.data)
-                } else {
-                  reject(new Error('登录失败'))
-                }
-              },
-              fail: reject
-            })
+          if (res.statusCode >= 200 && res.statusCode < 300) {
+            resolve(res.data);
           } else {
-            reject(new Error('登录失败：' + res.errMsg))
+            reject(res);
           }
         },
         fail: reject
-      })
-    })
-  },
-
-  // 登出方法
-  logout() {
-    this.globalData.token = null
-    this.globalData.userInfo = null
-    wx.removeStorageSync('token')
-    wx.removeStorageSync('userInfo')
+      });
+    });
   }
-})
+});

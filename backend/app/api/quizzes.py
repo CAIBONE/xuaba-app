@@ -11,6 +11,7 @@ from app.models.quiz import Quiz
 from app.models.mastery_history import MasteryHistory
 from app.schemas.quiz import QuizCreate, QuizResponse, GenerateQuizRequest, SubmitQuizRequest, QuizResultResponse
 from app.api.auth import get_current_user
+from app.services.quiz_generator import generate_quiz as generate_quiz_service
 
 router = APIRouter()
 
@@ -22,10 +23,7 @@ async def generate_quiz(
     user: User = Depends(get_current_user)
 ):
     """
-    生成测验（调用 Agent）
-
-    TODO: 集成 LangChain Agent 生成测验题目
-    目前返回模拟数据
+    生成测验（调用 LLM）
     """
     # 验证节点存在
     result = await db.execute(select(Node).where(Node.id == data.node_id))
@@ -36,20 +34,18 @@ async def generate_quiz(
     # 获取当前掌握度
     mastery_before = float(node.mastery_level)
 
-    # TODO: 调用 Main Agent 生成测验
-    # TODO: 调用 Audit Agent 审计
+    # 调用 LLM 生成测验
+    try:
+        quiz_data = await generate_quiz_service(
+            node_title=node.title,
+            node_description=node.description,
+            question_count=data.question_count,
+            quiz_type=data.quiz_type,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"测验生成失败: {str(e)}")
 
-    # 模拟生成题目
-    questions = []
-    for i in range(data.question_count):
-        questions.append({
-            "type": "choice",
-            "content": f"关于{node.title}的第{i+1}个问题？",
-            "options": ["A. 选项A", "B. 选项B", "C. 选项C", "D. 选项D"],
-            "answer": "A",
-            "explanation": "这是解析...",
-            "difficulty": "normal"
-        })
+    questions = quiz_data.get("questions", [])
 
     quiz = Quiz(
         node_id=data.node_id,

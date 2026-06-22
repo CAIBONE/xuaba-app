@@ -11,6 +11,7 @@ from app.models.content import Content
 from app.models.push_record import PushRecord
 from app.schemas.content import ContentCreate, ContentResponse, ContentListResponse, GenerateContentRequest, PushContentRequest
 from app.api.auth import get_current_user
+from app.services.content_generator import generate_content as generate_content_service
 
 router = APIRouter()
 
@@ -88,10 +89,7 @@ async def generate_content(
     user: User = Depends(get_current_user)
 ):
     """
-    生成教材（调用 Agent）
-
-    TODO: 集成 LangChain Agent 生成教材内容
-    目前返回模拟数据
+    生成教材（调用 LLM）
     """
     # 验证节点存在
     result = await db.execute(select(Node).where(Node.id == data.node_id))
@@ -99,27 +97,37 @@ async def generate_content(
     if not node:
         raise HTTPException(status_code=404, detail="节点不存在")
 
-    # TODO: 调用 Main Agent 生成教材
-    # TODO: 调用 Audit Agent 审计
+    # 调用 LLM 生成教材
+    try:
+        content_data = await generate_content_service(
+            node_title=node.title,
+            node_description=node.description,
+            content_type=data.content_type,
+            prerequisites=None,  # TODO: 查询前置节点标题
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"教材生成失败: {str(e)}")
 
-    # 模拟生成
+    # 计算字数
+    word_count = 0
+    if "sections" in content_data:
+        for section in content_data["sections"]:
+            word_count += len(section.get("content", ""))
+    elif "exercises" in content_data:
+        for exercise in content_data["exercises"]:
+            word_count += len(exercise.get("question", ""))
+            word_count += len(exercise.get("answer", ""))
+
+    # 保存教材
     content = Content(
         node_id=data.node_id,
         user_id=user.id,
         content_type=data.content_type,
-        title=f"{node.title} - {data.content_type}",
-        content_json={
-            "title": node.title,
-            "sections": [
-                {"heading": "概述", "content": "这是自动生成的教材内容..."},
-                {"heading": "核心概念", "content": "..."},
-                {"heading": "实例", "content": "..."},
-                {"heading": "总结", "content": "..."},
-            ]
-        },
-        word_count=1500,
+        title=content_data.get("title", f"{node.title} - {data.content_type}"),
+        content_json=content_data,
+        word_count=word_count,
         difficulty_level=data.difficulty,
-        audit_status="passed",  # TODO: 实际审计结果
+        audit_status="passed",  # TODO: 实际审计
     )
     db.add(content)
     await db.flush()

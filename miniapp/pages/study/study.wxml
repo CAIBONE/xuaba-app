@@ -1,0 +1,75 @@
+<view class="container">
+  <view wx:if="{{loading}}" class="loading">
+    <text>加载中...</text>
+  </view>
+
+  <view wx:elif="{{node}}" class="study-page">
+    <view class="card node-info">
+      <view class="node-title">{{node.title}}</view>
+      <view class="node-desc" wx:if="{{node.description}}">{{node.description}}</view>
+      <view class="node-meta">
+        <text>Level {{node.level}}</text>
+        <text>{{node.estimated_minutes}}分钟</text>
+      </view>
+    </view>
+
+    <view class="tabs">
+      <view class="tab {{activeTab === 'lesson' ? 'active' : ''}}" bindtap="switchTab" data-tab="lesson">
+        教材
+      </view>
+      <view class="tab {{activeTab === 'quiz' ? 'active' : ''}}" bindtap="switchTab" data-tab="quiz">
+        测验
+      </view>
+    </view>
+
+    <view wx:if="{{activeTab === 'lesson'}}" class="card content-section">
+      <view wx:if="{{!content}}" class="empty">
+        <text>还没有教材内容</text>
+        <view class="btn-primary {{generating ? 'disabled' : ''}}" bindtap="generateContent">
+          {{generating ? '生成中...' : '生成教材'}}
+        </view>
+      </view>
+
+      <view wx:else class="content-body">
+        <view class="content-title">{{content.title}}</view>
+        <view class="content-stats">{{content.word_count}}字</view>
+        
+        <view wx:if="{{content.content_json.sections}}" class="sections">
+          <view wx:for="{{content.content_json.sections}}" wx:key="heading" class="section">
+            <view class="section-heading">{{item.heading}}</view>
+            <view class="section-content">{{item.content}}</view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <view wx:if="{{activeTab === 'quiz'}}" class="card quiz-section">
+      <view wx:if="{{!quiz}}" class="empty">
+        <text>还没有测验题目</text>
+        <view class="btn-primary {{generating ? 'disabled' : ''}}" bindtap="generateQuiz">
+          {{generating ? '生成中...' : '生成测验'}}
+        </view>
+      </view>
+
+      <view wx:else class="quiz-body">
+        <view wx:for="{{quiz.questions}}" wx:key="index" class="question">
+          <view class="question-header">{{index + 1}}. {{item.type === 'choice' ? '选择题' : '简答题'}}</view>
+          <view class="question-content">{{item.content}}</view>
+          <view wx:if="{{item.options}}" class="options">
+            <view wx:for="{{item.options}}" wx:for-item="option" wx:key="*this" class="option">
+              {{option}}
+            </view>
+          </view>
+          <view class="answer">
+            <text class="answer-label">答案：</text>
+            <text>{{item.answer}}</text>
+          </view>
+          <view wx:if="{{item.explanation}}" class="explanation">
+            <text class="explanation-label">解析：</text>
+            <text>{{item.explanation}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

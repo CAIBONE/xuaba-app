@@ -1,65 +1,24 @@
-<!--pages/index/index.wxml-->
 <view class="container">
-  <!-- 用户信息 -->
-  <view class="user-card card" wx:if="{{userInfo}}">
-    <view class="flex flex-between flex-center">
-      <view class="flex flex-center">
-        <image class="avatar" src="{{userInfo.avatar || '/images/default-avatar.png'}}" mode="aspectFill"></image>
-        <view class="user-info">
-          <text class="nickname">{{userInfo.nickname || '学习者'}}</text>
-          <text class="study-days">已学习 {{studyDays}} 天</text>
-        </view>
-      </view>
-      <view class="tag tag-info">Lv.{{level}}</view>
-    </view>
+  <view class="header">
+    <text class="title">我的学习项目</text>
+    <view class="btn-primary" bindtap="createProject">+ 新建项目</view>
   </view>
 
-  <!-- 未登录 -->
-  <view class="login-card card" wx:else>
-    <text class="title">欢迎来到学吧</text>
-    <text class="subtitle">AI 智能学习助手，帮你高效学习</text>
-    <button class="btn-primary" bindtap="onLogin">微信登录</button>
+  <view wx:if="{{loading}}" class="loading">
+    <text>加载中...</text>
   </view>
 
-  <!-- 今日任务 -->
-  <view class="section" wx:if="{{userInfo}}">
-    <view class="section-title">今日任务</view>
-    <view class="task-list">
-      <view class="task-item card" wx:for="{{todayTasks}}" wx:key="id">
-        <view class="flex flex-between">
-          <view>
-            <text class="task-title">{{item.title}}</text>
-            <text class="task-desc">{{item.subject}} · 预计 {{item.estimatedMinutes}} 分钟</text>
-          </view>
-          <view class="tag {{item.status === 'completed' ? 'tag-success' : 'tag-warning'}}">
-            {{item.status === 'completed' ? '已完成' : '进行中'}}
-          </view>
-        </view>
-        <view class="progress-bar" wx:if="{{item.progress > 0}}">
-          <view class="progress-fill" style="width: {{item.progress}}%"></view>
-        </view>
-      </view>
-      <view class="empty" wx:if="{{todayTasks.length === 0}}">
-        <text>暂无任务，创建学习项目开始吧</text>
-      </view>
-    </view>
+  <view wx:elif="{{projects.length === 0}}" class="empty">
+    <text>还没有学习项目，点击上方按钮创建一个吧！</text>
   </view>
 
-  <!-- 快捷操作 -->
-  <view class="section" wx:if="{{userInfo}}">
-    <view class="section-title">快捷操作</view>
-    <view class="quick-actions">
-      <view class="action-item" bindtap="goToProjects">
-        <view class="action-icon">📚</view>
-        <text>学习项目</text>
-      </view>
-      <view class="action-item" bindtap="goToCreate">
-        <view class="action-icon">➕</view>
-        <text>新建项目</text>
-      </view>
-      <view class="action-item" bindtap="goToReports">
-        <view class="action-icon">📊</view>
-        <text>学习报表</text>
+  <view wx:else class="project-list">
+    <view class="card project-card" wx:for="{{projects}}" wx:key="id" bindtap="goToProject" data-id="{{item.id}}">
+      <view class="project-title">{{item.subject}}</view>
+      <view class="project-goal">{{item.goal_description}}</view>
+      <view class="project-meta">
+        <text>节点: {{item.tree_total_nodes || 0}}</text>
+        <text>学时: {{item.tree_total_hours || 0}}h</text>
       </view>
     </view>
   </view>
