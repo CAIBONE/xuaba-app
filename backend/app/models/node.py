@@ -1,6 +1,6 @@
 """知识节点模型"""
 from datetime import datetime
-from sqlalchemy import BigInteger, String, Integer, Numeric, DateTime, JSON, ForeignKey
+from sqlalchemy import BigInteger, String, Integer, Numeric, DateTime, JSON, ForeignKey, Text
 from sqlalchemy.orm import Mapped, mapped_column
 from app.database import Base
 
@@ -11,8 +11,9 @@ class Node(Base):
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
     project_id: Mapped[int] = mapped_column(BigInteger, ForeignKey("projects.id"), index=True)
-    node_key: Mapped[str] = mapped_column(String(100), comment="节点标识（如 mod-01-02）")
+    node_key: Mapped[str] = mapped_column(String(100), comment="节点标识（如 kp-001）")
     title: Mapped[str] = mapped_column(String(200), comment="节点标题")
+    description: Mapped[str] = mapped_column(Text, default="", comment="知识点描述")
     parent_id: Mapped[int] = mapped_column(BigInteger, nullable=True, comment="父节点 ID")
     level: Mapped[int] = mapped_column(Integer, default=0, comment="层级深度")
     estimated_minutes: Mapped[int] = mapped_column(Integer, default=30, comment="预计学习时间（分钟）")

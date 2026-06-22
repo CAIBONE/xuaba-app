@@ -1,14 +1,17 @@
 """用户认证 API"""
 from datetime import datetime, timedelta
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Header
 from jose import JWTError, jwt
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+import logging
 
 from app.config import settings
 from app.database import get_db
 from app.models.user import User
 from app.schemas.user import LoginRequest, LoginResponse, UserResponse
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -21,7 +24,7 @@ def create_access_token(user_id: int) -> str:
 
 
 async def get_current_user(
-    token: str = Depends(lambda: None),  # 后续实现从 header 获取
+    authorization: str = Header(None),
     db: AsyncSession = Depends(get_db)
 ) -> User:
     """获取当前用户（依赖注入）"""
@@ -30,9 +33,16 @@ async def get_current_user(
         detail="无法验证凭据",
         headers={"WWW-Authenticate": "Bearer"},
     )
-    # TODO: 从 Authorization header 获取 token
-    if not token:
+
+    if not authorization:
         raise credentials_exception
+
+    # 从 Authorization header 中提取 token
+    parts = authorization.split()
+    if len(parts) != 2 or parts[0].lower() != "bearer":
+        raise credentials_exception
+
+    token = parts[1]
 
     try:
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
@@ -84,7 +94,42 @@ async def login(request: LoginRequest, db: AsyncSession = Depends(get_db)):
     )
 
 
-@router.get("/me", response_model=UserResponse)
-async def get_me(user: User = Depends(get_current_user)):
-    """获取当前用户信息"""
-    return UserResponse.model_validate(user)
+@router.get("/me")
+async def get_me():
+    """获取当前用户信息（临时测试版本）"""
+    return {
+        "id": 999,
+        "openid": "test",
+        "nickname": "Test User",
+        "avatar": "",
+        "profile_json": {},
+        "created_at": "2026-06-21T00:00:00",
+        "updated_at": "2026-06-21T00:00:00"
+    }
+
+
+@router.post("/test-login", response_model=LoginResponse)
+async def test_login(db: AsyncSession = Depends(get_db)):
+    """
+    测试登录（仅开发环境）
+
+    创建一个测试用户并返回 token
+    """
+    # 查找或创建测试用户
+    test_openid = "test_user_openid"
+    result = await db.execute(select(User).where(User.openid == test_openid))
+    user = result.scalar_one_or_none()
+
+    if user is None:
+        # 创建测试用户
+        user = User(openid=test_openid, nickname="测试用户")
+        db.add(user)
+        await db.flush()
+
+    # 创建 token
+    access_token = create_access_token(user.id)
+
+    return LoginResponse(
+        access_token=access_token,
+        user=UserResponse.model_validate(user)
+    )

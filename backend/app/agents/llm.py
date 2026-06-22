@@ -11,11 +11,14 @@ def get_llm(
     temperature: Optional[float] = None
 ) -> BaseChatModel:
     """获取 LLM 实例"""
+    # DashScope OpenAI 兼容模式
+    base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+
     return ChatOpenAI(
         model=model or settings.LLM_MODEL,
         temperature=temperature if temperature is not None else settings.LLM_TEMPERATURE,
         api_key=settings.LLM_API_KEY,
-        base_url=settings.LLM_API_BASE,
+        base_url=base_url,
     )
 
 

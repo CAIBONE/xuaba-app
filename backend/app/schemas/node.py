@@ -7,6 +7,7 @@ from pydantic import BaseModel, Field
 class NodeBase(BaseModel):
     node_key: str = Field(..., max_length=100, description="节点标识")
     title: str = Field(..., max_length=200, description="节点标题")
+    description: str = Field(default="", description="知识点描述")
     parent_id: Optional[int] = None
     level: int = Field(default=0, ge=0)
     estimated_minutes: int = Field(default=30, gt=0)
