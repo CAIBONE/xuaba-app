@@ -22,11 +22,72 @@
     </view>
   </view>
 
+  <!-- 目标梳理模式 -->
+  <view wx:elif="{{mode === 'refinement'}}">
+    <view class="title">AI 目标梳理</view>
+    <view class="refinement-intro card">
+      <text class="intro-text">让我帮您梳理学习目标，这样可以生成更精准的知识图谱。</text>
+    </view>
+
+    <!-- 对话区域 -->
+    <view class="conversation-area card">
+      <!-- 追问问题 -->
+      <view wx:if="{{followUpQuestions.length > 0}}" class="questions-section">
+        <text class="section-label">AI 追问：</text>
+        <view wx:for="{{followUpQuestions}}" wx:key="index" class="question-bubble">
+          <text>{{item}}</text>
+        </view>
+      </view>
+
+      <!-- 用户回答历史 -->
+      <view wx:for="{{conversationHistory}}" wx:key="index" class="conversation-item">
+        <view wx:if="{{item.role === 'user'}}" class="user-answer">
+          <text>您的回答：{{item.content}}</text>
+        </view>
+      </view>
+
+      <!-- 梳理结果 -->
+      <view wx:if="{{goalRefinementReady}}" class="result-section card">
+        <text class="result-title">目标梳理完成</text>
+        <view class="result-item">
+          <text class="result-label">梳理后的目标：</text>
+          <text class="result-value">{{refinedGoal}}</text>
+        </view>
+        <view class="result-item">
+          <text class="result-label">当前水平：</text>
+          <text class="result-value">{{baselineLevel}}</text>
+        </view>
+      </view>
+
+      <!-- 输入区域 -->
+      <view wx:if="{{!goalRefinementReady}}" class="input-section">
+        <input
+          class="refinement-input"
+          placeholder="请回答以上问题..."
+          value="{{refinementInput}}"
+          bindinput="onRefinementInput"
+          bindconfirm="answerFollowUp"
+        />
+        <button class="btn-send" bindtap="answerFollowUp">发送</button>
+      </view>
+    </view>
+
+    <!-- 操作按钮 -->
+    <view class="refinement-actions">
+      <button wx:if="{{goalRefinementReady}}" class="btn-primary" bindtap="confirmGoalRefinement">确认并开始学习</button>
+      <button wx:else class="btn-secondary" bindtap="skipGoalRefinement">跳过，直接开始</button>
+    </view>
+  </view>
+
   <!-- 详情模式 -->
   <view wx:else>
     <view class="project-info card">
       <text class="project-subject">{{project.subject}}</text>
       <text class="project-goal">{{project.goal_description}}</text>
+      <view wx:if="{{project.baseline_level}}" class="baseline-info">
+        <text class="baseline-label">当前水平：</text>
+        <text class="baseline-value">{{project.baseline_level}}</text>
+      </view>
       <view class="project-actions">
         <button class="btn-primary" bindtap="goToTree">查看知识图谱</button>
         <button class="btn-secondary" bindtap="generateContent">生成教材</button>
@@ -57,3 +118,4 @@
     </view>
   </view>
 </view>
+

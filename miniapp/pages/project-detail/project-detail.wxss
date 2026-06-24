@@ -102,3 +102,134 @@
   color: #999;
   margin-top: 8rpx;
 }
+
+/* 目标梳理模式样式 */
+.refinement-intro {
+  padding: 30rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.intro-text {
+  font-size: 28rpx;
+  line-height: 1.6;
+}
+
+.conversation-area {
+  padding: 30rpx;
+  margin-top: 20rpx;
+  min-height: 600rpx;
+}
+
+.questions-section {
+  margin-bottom: 30rpx;
+}
+
+.section-label {
+  font-size: 28rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.question-bubble {
+  background: #f0f4ff;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  margin-bottom: 16rpx;
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+}
+
+.conversation-item {
+  margin-bottom: 20rpx;
+}
+
+.user-answer {
+  background: #e8f5e9;
+  border-radius: 16rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+  color: #333;
+}
+
+.result-section {
+  background: #f0f9ff;
+  border: 2rpx solid #4A90E2;
+  padding: 30rpx;
+  margin-top: 30rpx;
+}
+
+.result-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #4A90E2;
+  margin-bottom: 20rpx;
+  display: block;
+}
+
+.result-item {
+  margin-bottom: 16rpx;
+}
+
+.result-label {
+  font-size: 26rpx;
+  color: #666;
+  margin-bottom: 8rpx;
+  display: block;
+}
+
+.result-value {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+}
+
+.input-section {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 30rpx;
+  align-items: center;
+}
+
+.refinement-input {
+  flex: 1;
+  border: 1rpx solid #ddd;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  font-size: 28rpx;
+}
+
+.btn-send {
+  background: #4A90E2;
+  color: white;
+  border-radius: 12rpx;
+  padding: 20rpx 40rpx;
+  font-size: 28rpx;
+  border: none;
+}
+
+.refinement-actions {
+  margin-top: 30rpx;
+  padding: 0 30rpx;
+}
+
+.baseline-info {
+  background: #f0f9ff;
+  border-radius: 12rpx;
+  padding: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.baseline-label {
+  font-size: 26rpx;
+  color: #666;
+  margin-right: 12rpx;
+}
+
+.baseline-value {
+  font-size: 28rpx;
+  color: #333;
+}
