@@ -48,3 +48,118 @@
 .content-actions button {
   flex: 1;
 }
+
+/* Notes Section */
+.notes-section {
+  padding: 30rpx;
+  margin-bottom: 120rpx;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.section-title text:first-child {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+}
+
+.note-count {
+  font-size: 24rpx;
+  color: #999;
+}
+
+.note-input-area {
+  display: flex;
+  gap: 20rpx;
+  margin-bottom: 30rpx;
+}
+
+.note-input {
+  flex: 1;
+  min-height: 120rpx;
+  padding: 20rpx;
+  border: 2rpx solid #e8e8e8;
+  border-radius: 8rpx;
+  font-size: 28rpx;
+}
+
+.btn-small {
+  padding: 0 30rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  font-size: 28rpx;
+}
+
+.notes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.note-item {
+  padding: 20rpx;
+  background: #fffbe6;
+  border-left: 6rpx solid #faad14;
+  border-radius: 8rpx;
+}
+
+.note-item.highlight {
+  background: #e6f7ff;
+  border-left-color: #1890ff;
+}
+
+.note-text {
+  font-size: 28rpx;
+  color: #333;
+  line-height: 1.6;
+  display: block;
+  margin-bottom: 10rpx;
+}
+
+.note-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.note-type {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.note-time {
+  font-size: 22rpx;
+  color: #999;
+}
+
+/* Chat FAB */
+.chat-fab {
+  position: fixed;
+  right: 40rpx;
+  bottom: 160rpx;
+  width: 120rpx;
+  height: 120rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border-radius: 60rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(102, 126, 234, 0.4);
+  z-index: 100;
+}
+
+.fab-icon {
+  font-size: 48rpx;
+  margin-bottom: 4rpx;
+}
+
+.fab-text {
+  font-size: 20rpx;
+  color: #fff;
+}

@@ -37,6 +37,9 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     JWT_EXPIRE_HOURS: int = 24 * 7  # 7 天
 
+    # 管理后台
+    ADMIN_API_KEY: str = "change-this-admin-key"
+
     class Config:
         env_file = ".env"
         case_sensitive = True

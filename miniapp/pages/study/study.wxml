@@ -37,7 +37,7 @@
         <view wx:if="{{content.content_json.sections}}" class="sections">
           <view wx:for="{{content.content_json.sections}}" wx:key="heading" class="section">
             <view class="section-heading">{{item.heading}}</view>
-            <view class="section-content">{{item.content}}</view>
+            <rich-text nodes="{{item.content_html || item.content}}"></rich-text>
           </view>
         </view>
       </view>

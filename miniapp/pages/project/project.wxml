@@ -16,20 +16,53 @@
           <text class="stat-value">{{project.tree_total_hours || 0}}h</text>
           <text class="stat-label">预计学时</text>
         </view>
+        <view class="stat">
+          <text class="stat-value">{{completedCount}}</text>
+          <text class="stat-label">已完成</text>
+        </view>
       </view>
     </view>
 
     <view wx:if="{{nodes.length === 0}}" class="card empty-tree">
       <text>还没有知识图谱</text>
-      <view class="btn-primary {{generating ? 'disabled' : ''}}" bindtap="generateTree">
-        {{generating ? '生成中...' : '生成知识图谱'}}
+      <view class="generation-progress" wx:if="{{generating}}">
+        <view class="progress-bar">
+          <view class="progress-fill" style="width: {{progressPercent}}%"></view>
+        </view>
+        <text class="progress-text">生成大约需要 30-60 秒</text>
+      </view>
+      <view class="btn-primary {{generating ? 'disabled' : ''}}" bindtap="generateTree" wx:if="{{!generating}}">
+        生成知识图谱
+      </view>
+      <view class="btn-secondary" bindtap="refreshTree" wx:if="{{generating && progressPercent >= 90}}">
+        刷新查看结果
       </view>
     </view>
 
     <view wx:else class="card">
-      <view class="section-title">知识图谱</view>
+      <view class="section-title">
+        <text>知识图谱</text>
+        <view class="batch-actions">
+          <button class="btn-small" bindtap="toggleSelectMode">{{selectMode ? '取消选择' : '批量生成'}}</button>
+          <button class="btn-small btn-primary" bindtap="batchGenerateContent" wx:if="{{selectMode && selectedNodes.length > 0}}">
+            生成教材 ({{selectedNodes.length}})
+          </button>
+          <button class="btn-small btn-primary" bindtap="generateAllContent" wx:if="{{!selectMode && hasUnGeneratedNodes}}">
+            一键生成全部教材
+          </button>
+        </view>
+      </view>
       <view class="node-list">
-        <view class="node-item" wx:for="{{nodes}}" wx:key="id" bindtap="goToStudy" data-id="{{item.id}}">
+        <view class="node-item {{item.selected ? 'selected' : ''}}" wx:for="{{nodes}}" wx:key="id"
+              bindtap="{{selectMode ? 'toggleNodeSelect' : 'goToStudy'}}" data-id="{{item.id}}" data-index="{{index}}">
+          <view class="node-checkbox" wx:if="{{selectMode}}">
+            <text wx:if="{{item.selected}}">✓</text>
+          </view>
+          <view class="node-status-icon">
+            <text wx:if="{{item.status === 'completed'}}" class="status-completed">✅</text>
+            <text wx:elif="{{item.hasContent}}" class="status-content">📝</text>
+            <text wx:else class="status-pending">⬜</text>
+          </view>
           <view class="node-level">L{{item.level}}</view>
           <view class="node-content">
             <view class="node-title">{{item.title}}</view>

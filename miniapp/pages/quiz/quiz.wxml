@@ -20,6 +20,28 @@
         <text class="option-text">{{item}}</text>
       </view>
     </view>
+
+    <!-- Feedback Section -->
+    <view class="feedback-section" wx:if="{{selectedAnswer !== null}}">
+      <text class="feedback-title">你觉得这道题怎么样？</text>
+      <view class="feedback-buttons">
+        <button class="feedback-btn {{feedback[currentIndex] === 'confused' ? 'active confused' : ''}}"
+                bindtap="setFeedback" data-type="confused">
+          <text class="feedback-icon">😕</text>
+          <text class="feedback-text">不了解</text>
+        </button>
+        <button class="feedback-btn {{feedback[currentIndex] === 'familiar' ? 'active familiar' : ''}}"
+                bindtap="setFeedback" data-type="familiar">
+          <text class="feedback-icon">😊</text>
+          <text class="feedback-text">熟知</text>
+        </button>
+        <button class="feedback-btn {{feedback[currentIndex] === 'unclear' ? 'active unclear' : ''}}"
+                bindtap="setFeedback" data-type="unclear">
+          <text class="feedback-icon">🤔</text>
+          <text class="feedback-text">题目不清</text>
+        </button>
+      </view>
+    </view>
   </view>
 
   <view class="quiz-actions">
@@ -33,6 +55,29 @@
     <text class="result-title">测验完成！</text>
     <text class="result-score">得分：{{result.score}}</text>
     <text class="result-detail">正确 {{result.correct_count}} / {{result.total_questions}} 题</text>
-    <button class="btn-primary" bindtap="goBack">返回</button>
+
+    <view class="feedback-summary" wx:if="{{feedbackCount > 0}}">
+      <text class="feedback-summary-title">反馈统计</text>
+      <view class="feedback-stats">
+        <view class="stat-item">
+          <text class="stat-icon">😕</text>
+          <text class="stat-value">{{feedbackStats.confused}}</text>
+          <text class="stat-label">不了解</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-icon">😊</text>
+          <text class="stat-value">{{feedbackStats.familiar}}</text>
+          <text class="stat-label">熟知</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-icon">🤔</text>
+          <text class="stat-value">{{feedbackStats.unclear}}</text>
+          <text class="stat-label">题目不清</text>
+        </view>
+      </view>
+    </view>
+
+    <button class="btn-primary" bindtap="submitFeedback" wx:if="{{feedbackCount > 0}}">提交反馈</button>
+    <button class="btn-secondary" bindtap="goBack">返回</button>
   </view>
 </view>

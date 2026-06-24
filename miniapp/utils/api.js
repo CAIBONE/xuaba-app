@@ -5,7 +5,8 @@ const { get, post, put, del } = require('./request')
 // 用户相关
 const auth = {
   login: (code) => post('/auth/login', { code }),
-  getMe: () => get('/auth/me')
+  getMe: () => get('/auth/me'),
+  updateProfile: (data) => put('/auth/profile', data)
 }
 
 // 项目相关
@@ -16,14 +17,16 @@ const projects = {
   update: (id, data) => put(`/projects/${id}`, data),
   delete: (id) => del(`/projects/${id}`),
   generateTree: (id) => post(`/projects/${id}/generate-tree`),
-  generatePlan: (id, data) => post(`/projects/${id}/generate-plan`, data)
+  generatePlan: (id, data) => post(`/projects/${id}/generate-plan`, data),
+  refineGoal: (id, data) => post(`/projects/${id}/refine-goal`, data)
 }
 
 // 节点相关
 const nodes = {
   listByProject: (projectId) => get(`/nodes/project/${projectId}`),
   getTree: (projectId) => get(`/nodes/project/${projectId}/tree`),
-  get: (id) => get(`/nodes/${id}`)
+  get: (id) => get(`/nodes/${id}`),
+  update: (id, data) => put(`/nodes/${id}`, data)
 }
 
 // 教材相关
@@ -31,6 +34,7 @@ const contents = {
   listByNode: (nodeId) => get(`/contents/node/${nodeId}`),
   get: (id) => get(`/contents/${id}`),
   generate: (data) => post('/contents/generate', data),
+  batchGenerate: (nodeIds, contentType = 'lesson') => post('/contents/batch-generate', { node_ids: nodeIds, content_type: contentType }),
   push: (id, data) => post(`/contents/${id}/push`, data)
 }
 
@@ -38,7 +42,21 @@ const contents = {
 const quizzes = {
   get: (id) => get(`/quizzes/${id}`),
   generate: (data) => post('/quizzes/generate', data),
-  submit: (id, data) => post(`/quizzes/${id}/submit`, data)
+  submit: (id, data) => post(`/quizzes/${id}/submit`, data),
+  feedback: (id, data) => post(`/quizzes/${id}/feedback`, data)
+}
+
+// 笔记相关
+const notes = {
+  listByContent: (contentId) => get(`/contents/${contentId}/notes`),
+  create: (contentId, data) => post(`/contents/${contentId}/notes`, data),
+  delete: (id) => del(`/notes/${id}`)
+}
+
+// 对话相关
+const chat = {
+  send: (projectId, message) => post(`/chat/${projectId}`, { message }),
+  history: (projectId) => get(`/chat/${projectId}/history`)
 }
 
 // 报表相关
@@ -56,5 +74,7 @@ module.exports = {
   nodes,
   contents,
   quizzes,
+  notes,
+  chat,
   reports
 }

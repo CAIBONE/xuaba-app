@@ -11,8 +11,35 @@
   <view class="content-body card" wx:if="{{content.sections}}">
     <view class="section" wx:for="{{content.sections}}" wx:key="heading">
       <text class="section-heading">{{item.heading}}</text>
-      <rich-text nodes="{{item.content}}"></rich-text>
+      <rich-text nodes="{{item.content_html || item.content}}" bindtap="onTextTap" data-section="{{index}}"></rich-text>
     </view>
+  </view>
+
+  <!-- 笔记区域 -->
+  <view class="notes-section card">
+    <view class="section-title">
+      <text>笔记与划线</text>
+      <text class="note-count">{{notes.length}} 条笔记</text>
+    </view>
+    <view class="note-input-area">
+      <textarea class="note-input" placeholder="添加笔记..." bindinput="onNoteInput" value="{{newNote}}" />
+      <button class="btn-primary btn-small" bindtap="addNote">添加</button>
+    </view>
+    <view class="notes-list">
+      <view class="note-item {{item.note_type}}" wx:for="{{notes}}" wx:key="id">
+        <text class="note-text">{{item.text}}</text>
+        <view class="note-meta">
+          <text class="note-type">{{item.note_type === 'highlight' ? '划线' : '笔记'}}</text>
+          <text class="note-time">{{item.created_at}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- AI 对话按钮 -->
+  <view class="chat-fab" bindtap="openChat">
+    <text class="fab-icon">💬</text>
+    <text class="fab-text">AI 助手</text>
   </view>
 
   <view class="content-actions">

@@ -10,6 +10,7 @@ from app.models.mastery_history import MasteryHistory
 from app.models.study_log import StudyLog
 from app.models.audit_record import AuditRecord
 from app.models.conversation import Conversation
+from app.models.note import Note
 
 __all__ = [
     "User",
@@ -23,4 +24,5 @@ __all__ = [
     "StudyLog",
     "AuditRecord",
     "Conversation",
+    "Note",
 ]

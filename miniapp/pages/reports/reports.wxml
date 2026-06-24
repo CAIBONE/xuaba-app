@@ -2,38 +2,77 @@
 <view class="container">
   <view class="title">学习报表</view>
 
+  <!-- 项目选择器 -->
+  <view class="project-selector card" wx:if="{{projects.length > 1}}">
+    <picker mode="selector" range="{{projects}}" range-key="subject" bindchange="onProjectChange">
+      <view class="picker">
+        当前项目：{{projects[0].subject}} ▼
+      </view>
+    </picker>
+  </view>
+
   <!-- 学习进度 -->
-  <view class="section">
+  <view class="section" wx:if="{{progress}}">
     <view class="section-title">学习进度</view>
     <view class="progress-overview card">
       <view class="stat-row">
         <text class="stat-label">总知识点</text>
-        <text class="stat-value">{{progress.total_nodes || 0}}</text>
+        <text class="stat-value">{{progress.total_nodes}}</text>
       </view>
       <view class="stat-row">
         <text class="stat-label">已完成</text>
-        <text class="stat-value">{{progress.completed_nodes || 0}}</text>
+        <text class="stat-value">{{progress.completed_nodes}}</text>
+      </view>
+      <view class="stat-row">
+        <text class="stat-label">进行中</text>
+        <text class="stat-value">{{progress.in_progress_nodes}}</text>
       </view>
       <view class="stat-row">
         <text class="stat-label">完成率</text>
-        <text class="stat-value">{{progress.completion_rate || 0}}%</text>
+        <text class="stat-value">{{progress.completion_rate * 100}}%</text>
+      </view>
+      <view class="stat-row">
+        <text class="stat-label">计划学时</text>
+        <text class="stat-value">{{progress.total_hours_planned}}h</text>
       </view>
       <view class="progress-bar">
-        <view class="progress-fill" style="width: {{progress.completion_rate || 0}}%"></view>
+        <view class="progress-fill" style="width: {{progress.completion_rate * 100}}%"></view>
       </view>
     </view>
   </view>
 
   <!-- 打卡热力图 -->
-  <view class="section">
+  <view class="section" wx:if="{{heatmap}}">
     <view class="section-title">学习打卡</view>
     <view class="heatmap card">
       <view class="heatmap-stats">
-        <text>连续学习 {{heatmap.active_days || 0}} 天</text>
-        <text>累计 {{heatmap.total_minutes || 0}} 分钟</text>
+        <text>连续学习 {{heatmap.active_days}} 天</text>
+        <text>累计 {{heatmap.total_minutes}} 分钟</text>
       </view>
       <view class="heatmap-grid">
         <view class="heatmap-cell level-{{item.level}}" wx:for="{{heatmapDays}}" wx:key="date" title="{{item.date}}"></view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 遗忘曲线 -->
+  <view class="section" wx:if="{{forgetting && forgetting.points.length > 0}}">
+    <view class="section-title">遗忘曲线</view>
+    <view class="forgetting card">
+      <view class="forgetting-stats">
+        <text>需要复习的知识点：{{forgetting.total_nodes_to_review}} 个</text>
+      </view>
+      <view class="forgetting-list">
+        <view class="forgetting-item" wx:for="{{forgetting.points}}" wx:key="node_id">
+          <text class="node-name">{{item.node_title}}</text>
+          <view class="mastery-info">
+            <text class="days-since">{{item.days_since_review}}天前学习</text>
+            <text class="predicted">预计掌握度：{{item.predicted_mastery * 100}}%</text>
+          </view>
+          <view class="mastery-bar">
+            <view class="mastery-fill {{item.needs_review ? 'needs-review' : ''}}" style="width: {{item.predicted_mastery * 100}}%"></view>
+          </view>
+        </view>
       </view>
     </view>
   </view>
@@ -55,3 +94,4 @@
     </view>
   </view>
 </view>
+

@@ -27,6 +27,9 @@ class Quiz(Base):
     mastery_before: Mapped[float] = mapped_column(Numeric(3, 2), default=0)
     mastery_after: Mapped[float] = mapped_column(Numeric(3, 2), default=0)
 
+    # 用户反馈（每题）
+    feedback_json: Mapped[dict] = mapped_column(JSON, default=dict, comment="用户反馈 {question_idx: feedback_type}")
+
     # 时间
     started_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)
     completed_at: Mapped[datetime] = mapped_column(DateTime, nullable=True)

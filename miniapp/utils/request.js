@@ -18,6 +18,7 @@ function request(options) {
       url: `${app.globalData.baseUrl}${url}`,
       method,
       data,
+      timeout: 300000,  // 5分钟超时，LLM生成可能较慢
       header: {
         'Content-Type': 'application/json',
         ...header

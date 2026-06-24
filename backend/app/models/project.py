@@ -22,8 +22,14 @@ class Project(Base):
     tree_total_nodes: Mapped[int] = mapped_column(Integer, default=0, comment="节点总数")
     tree_total_hours: Mapped[float] = mapped_column(Numeric(5, 1), default=0, comment="预计总学时")
 
-    # 学习计划策略
+    # 学习目标策略
     plan_strategy: Mapped[dict] = mapped_column(JSON, default=dict, comment="学习策略配置")
+
+    # 目标梳理（2-track 系统）
+    baseline_level: Mapped[str] = mapped_column(Text, default="", comment="用户当前水平描述")
+    benchmark_source: Mapped[str] = mapped_column(Text, default="", comment="考试标准来源")
+    target_score: Mapped[str] = mapped_column(String(50), default="", comment="目标分数")
+    learning_why: Mapped[str] = mapped_column(Text, default="", comment="学习动机")
 
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     updated_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)

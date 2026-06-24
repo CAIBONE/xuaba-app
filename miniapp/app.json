@@ -1,8 +1,15 @@
 {
   "pages": [
     "pages/index/index",
+    "pages/projects/projects",
     "pages/project/project",
-    "pages/study/study"
+    "pages/project-detail/project-detail",
+    "pages/knowledge-tree/knowledge-tree",
+    "pages/content/content",
+    "pages/study/study",
+    "pages/quiz/quiz",
+    "pages/reports/reports",
+    "pages/chat/chat"
   ],
   "window": {
     "backgroundTextStyle": "light",

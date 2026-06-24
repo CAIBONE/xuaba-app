@@ -12,7 +12,10 @@ class ProjectBase(BaseModel):
 
 
 class ProjectCreate(ProjectBase):
-    pass
+    baseline_level: Optional[str] = None
+    benchmark_source: Optional[str] = None
+    target_score: Optional[str] = None
+    learning_why: Optional[str] = None
 
 
 class ProjectUpdate(BaseModel):
@@ -22,6 +25,10 @@ class ProjectUpdate(BaseModel):
     deadline: Optional[date] = None
     status: Optional[str] = None
     plan_strategy: Optional[dict] = None
+    baseline_level: Optional[str] = None
+    benchmark_source: Optional[str] = None
+    target_score: Optional[str] = None
+    learning_why: Optional[str] = None
 
 
 class ProjectResponse(ProjectBase):
@@ -32,6 +39,10 @@ class ProjectResponse(ProjectBase):
     tree_total_nodes: int
     tree_total_hours: float
     plan_strategy: dict
+    baseline_level: str
+    benchmark_source: str
+    target_score: str
+    learning_why: str
     created_at: datetime
     updated_at: datetime
 

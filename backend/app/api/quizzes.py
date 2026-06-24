@@ -170,3 +170,67 @@ async def submit_quiz(
         mastery_change=round(mastery_change, 2),
         answers_detail=answers_detail
     )
+
+
+@router.post("/{quiz_id}/feedback")
+async def submit_quiz_feedback(
+    quiz_id: int,
+    feedback: dict,  # {"question_0": "confused", "question_1": "familiar", ...}
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    """
+    提交测验反馈
+
+    feedback 格式：
+    {
+        "question_0": "confused",   # 不了解
+        "question_1": "familiar",   # 熟知
+        "question_2": "unclear"     # 题目有问题
+    }
+
+    反馈类型：
+    - confused: 不了解，需要复习
+    - familiar: 熟知，已掌握
+    - unclear: 题目表述不清
+    """
+    # 获取测验
+    result = await db.execute(
+        select(Quiz).where(Quiz.id == quiz_id, Quiz.user_id == user.id)
+    )
+    quiz = result.scalar_one_or_none()
+    if not quiz:
+        raise HTTPException(status_code=404, detail="测验不存在")
+
+    # 更新反馈
+    quiz.feedback_json = feedback
+    await db.flush()
+
+    # 根据反馈更新用户画像
+    result = await db.execute(select(User).where(User.id == user.id))
+    user_obj = result.scalar_one()
+
+    # 统计反馈
+    confused_count = sum(1 for v in feedback.values() if v == "confused")
+    familiar_count = sum(1 for v in feedback.values() if v == "familiar")
+
+    # 更新用户画像（简单实现，后续可优化）
+    profile = user_obj.profile_json or {}
+    profile["quiz_feedback_count"] = profile.get("quiz_feedback_count", 0) + 1
+    profile["total_confused"] = profile.get("total_confused", 0) + confused_count
+    profile["total_familiar"] = profile.get("total_familiar", 0) + familiar_count
+
+    # 根据反馈调整学习风格
+    if confused_count > familiar_count:
+        profile["learning_style"] = "需要更多基础讲解"
+    elif familiar_count > confused_count:
+        profile["learning_style"] = "可以快速推进"
+
+    user_obj.profile_json = profile
+    await db.flush()
+
+    return {
+        "message": "反馈已提交",
+        "quiz_id": quiz_id,
+        "feedback_count": len(feedback)
+    }

@@ -2,6 +2,7 @@
 import json
 import re
 import asyncio
+import markdown
 from typing import Optional
 from langchain_core.messages import SystemMessage, HumanMessage
 
@@ -107,6 +108,23 @@ def build_exercise_prompt(node_title: str, node_description: str) -> str:
 请生成 5-8 道题目，包括选择题和简答题。"""
 
 
+def markdown_to_html(md_text: str) -> str:
+    """将 Markdown 文本转换为 HTML"""
+    return markdown.markdown(
+        md_text,
+        extensions=['tables', 'fenced_code', 'nl2br']
+    )
+
+
+def post_process_content(content: dict) -> dict:
+    """后处理：将 Markdown 内容转换为 HTML"""
+    if "sections" in content:
+        for section in content["sections"]:
+            if "content" in section:
+                section["content_html"] = markdown_to_html(section["content"])
+    return content
+
+
 def parse_content_response(text: str) -> dict:
     """从 LLM 响应中解析 JSON"""
     try:
@@ -171,6 +189,9 @@ async def generate_content(
         try:
             response = await llm.ainvoke(messages)
             content = parse_content_response(response.content)
+            # 后处理：Markdown → HTML
+            if content_type == "lesson":
+                content = post_process_content(content)
             return content
 
         except Exception as e:

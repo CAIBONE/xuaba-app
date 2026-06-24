@@ -10,6 +10,15 @@ from app.models.node import Node
 from app.schemas.project import ProjectCreate, ProjectUpdate, ProjectResponse, ProjectListResponse
 from app.api.auth import get_current_user
 from app.services.tree_generator import generate_knowledge_tree, flatten_tree
+from app.services.goal_refiner import refine_goal
+from app.services.tree_validator import validate_tree
+from pydantic import BaseModel
+from typing import Optional
+
+
+class RefineGoalRequest(BaseModel):
+    raw_goal: str
+    conversation_history: Optional[list[dict]] = None
 
 router = APIRouter()
 
@@ -27,6 +36,10 @@ async def create_project(
         goal_description=data.goal_description,
         goal_type=data.goal_type,
         deadline=data.deadline,
+        baseline_level=data.baseline_level or "",
+        benchmark_source=data.benchmark_source or "",
+        target_score=data.target_score or "",
+        learning_why=data.learning_why or "",
     )
     db.add(project)
     await db.flush()
@@ -104,6 +117,51 @@ async def update_project(
     return ProjectResponse.model_validate(project)
 
 
+@router.post("/{project_id}/refine-goal")
+async def refine_project_goal(
+    project_id: int,
+    data: RefineGoalRequest,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    """梳理学习目标（2-track 系统）"""
+    result = await db.execute(
+        select(Project).where(Project.id == project_id, Project.user_id == user.id)
+    )
+    project = result.scalar_one_or_none()
+    if not project:
+        raise HTTPException(status_code=404, detail="项目不存在")
+
+    try:
+        refined = await refine_goal(
+            raw_goal=data.raw_goal,
+            conversation_history=data.conversation_history,
+        )
+
+        # 更新项目信息
+        if refined.get("goal_type"):
+            project.goal_type = refined["goal_type"]
+        if refined.get("refined_goal"):
+            project.goal_description = refined["refined_goal"]
+        if refined.get("baseline_level"):
+            project.baseline_level = refined["baseline_level"]
+        if refined.get("target", {}).get("score"):
+            project.target_score = refined["target"]["score"]
+        if refined.get("target", {}).get("date"):
+            from datetime import datetime
+            try:
+                project.deadline = datetime.strptime(refined["target"]["date"], "%Y-%m-%d").date()
+            except ValueError:
+                pass
+
+        await db.flush()
+
+        return refined
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"目标梳理失败: {str(e)}")
+
+
 @router.post("/{project_id}/generate-tree", status_code=status.HTTP_201_CREATED)
 async def generate_tree(
     project_id: int,
@@ -123,15 +181,33 @@ async def generate_tree(
     await db.execute(delete(Node).where(Node.project_id == project_id))
 
     # 调用 LLM 生成知识树
-    try:
-        tree = await generate_knowledge_tree(
-            subject=project.subject,
-            goal=project.goal_description,
-            goal_type=project.goal_type,
-            deadline=str(project.deadline) if project.deadline else None,
-        )
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"知识图谱生成失败: {str(e)}")
+    max_attempts = 3
+    tree = None
+    validation_errors = []
+
+    for attempt in range(max_attempts):
+        try:
+            tree = await generate_knowledge_tree(
+                subject=project.subject,
+                goal=project.goal_description,
+                goal_type=project.goal_type,
+                deadline=str(project.deadline) if project.deadline else None,
+                baseline_level=project.baseline_level,
+            )
+
+            # 6 步验证
+            is_valid, validation_errors = validate_tree(tree)
+            if is_valid:
+                break
+            else:
+                print(f"知识图谱验证失败 (尝试 {attempt + 1}/{max_attempts}): {validation_errors}")
+                # 下一次尝试会根据错误信息调整
+        except Exception as e:
+            if attempt == max_attempts - 1:
+                raise HTTPException(status_code=500, detail=f"知识图谱生成失败: {str(e)}")
+
+    if tree is None:
+        raise HTTPException(status_code=500, detail=f"知识图谱生成失败，验证未通过: {validation_errors}")
 
     # 扁平化并插入数据库
     flat_nodes = flatten_tree(tree)

@@ -115,3 +115,107 @@
   display: block;
   margin-bottom: 40rpx;
 }
+
+/* Feedback Section */
+.feedback-section {
+  margin-top: 40rpx;
+  padding-top: 30rpx;
+  border-top: 2rpx solid #f0f0f0;
+}
+
+.feedback-title {
+  font-size: 28rpx;
+  color: #666;
+  display: block;
+  margin-bottom: 20rpx;
+}
+
+.feedback-buttons {
+  display: flex;
+  gap: 20rpx;
+}
+
+.feedback-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20rpx;
+  border: 2rpx solid #e8e8e8;
+  border-radius: 12rpx;
+  background: #fff;
+}
+
+.feedback-btn.active.confused {
+  border-color: #faad14;
+  background: #fffbe6;
+}
+
+.feedback-btn.active.familiar {
+  border-color: #52c41a;
+  background: #f6ffed;
+}
+
+.feedback-btn.active.unclear {
+  border-color: #1890ff;
+  background: #e6f7ff;
+}
+
+.feedback-icon {
+  font-size: 48rpx;
+  margin-bottom: 8rpx;
+}
+
+.feedback-text {
+  font-size: 24rpx;
+  color: #666;
+}
+
+.feedback-btn.active .feedback-text {
+  color: #333;
+  font-weight: 500;
+}
+
+/* Feedback Summary */
+.feedback-summary {
+  margin: 40rpx 0;
+  padding: 30rpx;
+  background: #fafafa;
+  border-radius: 12rpx;
+}
+
+.feedback-summary-title {
+  font-size: 28rpx;
+  color: #333;
+  font-weight: 500;
+  display: block;
+  margin-bottom: 20rpx;
+}
+
+.feedback-stats {
+  display: flex;
+  justify-content: space-around;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-icon {
+  font-size: 48rpx;
+  margin-bottom: 8rpx;
+}
+
+.stat-value {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 4rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: #999;
+}

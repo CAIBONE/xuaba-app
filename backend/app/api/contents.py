@@ -1,5 +1,7 @@
 """教材 API"""
 from datetime import datetime
+from typing import List
+from pydantic import BaseModel
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -167,3 +169,89 @@ async def push_content(
     await db.flush()
 
     return {"message": "推送成功", "push_id": push_record.id}
+
+
+class BatchGenerateRequest(BaseModel):
+    node_ids: List[int]
+    content_type: str = "lesson"
+    difficulty: str = "medium"
+
+
+@router.post("/batch-generate")
+async def batch_generate_content(
+    data: BatchGenerateRequest,
+    db: AsyncSession = Depends(get_db),
+    user: User = Depends(get_current_user)
+):
+    """
+    批量生成教材（为多个节点生成教材）
+    注意：这是同步调用，可能需要较长时间
+    """
+    results = []
+    errors = []
+
+    for node_id in data.node_ids:
+        # 验证节点存在
+        result = await db.execute(select(Node).where(Node.id == node_id))
+        node = result.scalar_one_or_none()
+        if not node:
+            errors.append({"node_id": node_id, "error": "节点不存在"})
+            continue
+
+        # 检查是否已有教材
+        existing = await db.execute(
+            select(Content).where(
+                Content.node_id == node_id,
+                Content.user_id == user.id,
+                Content.content_type == data.content_type
+            )
+        )
+        if existing.scalar_one_or_none():
+            results.append({"node_id": node_id, "status": "already_exists"})
+            continue
+
+        # 调用 LLM 生成教材
+        try:
+            content_data = await generate_content_service(
+                node_title=node.title,
+                node_description=node.description,
+                content_type=data.content_type,
+                prerequisites=None,
+            )
+
+            # 计算字数
+            word_count = 0
+            if "sections" in content_data:
+                for section in content_data["sections"]:
+                    word_count += len(section.get("content", ""))
+            elif "exercises" in content_data:
+                for exercise in content_data["exercises"]:
+                    word_count += len(exercise.get("question", ""))
+                    word_count += len(exercise.get("answer", ""))
+
+            # 保存教材
+            content = Content(
+                node_id=node_id,
+                user_id=user.id,
+                content_type=data.content_type,
+                title=content_data.get("title", f"{node.title} - {data.content_type}"),
+                content_json=content_data,
+                word_count=word_count,
+                difficulty_level=data.difficulty,
+                audit_status="passed",
+            )
+            db.add(content)
+            await db.flush()
+            results.append({"node_id": node_id, "status": "generated", "content_id": content.id})
+
+        except Exception as e:
+            errors.append({"node_id": node_id, "error": str(e)})
+
+    return {
+        "total": len(data.node_ids),
+        "generated": len([r for r in results if r.get("status") == "generated"]),
+        "already_exists": len([r for r in results if r.get("status") == "already_exists"]),
+        "errors": len(errors),
+        "results": results,
+        "error_details": errors
+    }

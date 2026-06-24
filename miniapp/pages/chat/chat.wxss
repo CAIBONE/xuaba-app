@@ -1,0 +1,129 @@
+/* pages/chat/chat.wxss */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #f5f5f5;
+}
+
+.chat-header {
+  padding: 30rpx;
+  background: #fff;
+  border-bottom: 2rpx solid #e8e8e8;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+  color: #333;
+  display: block;
+}
+
+.subtitle {
+  font-size: 24rpx;
+  color: #999;
+  margin-top: 8rpx;
+  display: block;
+}
+
+.chat-messages {
+  flex: 1;
+  padding: 30rpx;
+  overflow-y: auto;
+}
+
+.message-item {
+  display: flex;
+  margin-bottom: 30rpx;
+  align-items: flex-start;
+}
+
+.message-item.user {
+  flex-direction: row-reverse;
+}
+
+.message-avatar {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 40rpx;
+  background: #e8e8e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40rpx;
+  flex-shrink: 0;
+}
+
+.message-content {
+  max-width: 70%;
+  margin: 0 20rpx;
+  padding: 20rpx 30rpx;
+  border-radius: 16rpx;
+  position: relative;
+}
+
+.message-item.user .message-content {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+}
+
+.message-item.assistant .message-content {
+  background: #fff;
+  color: #333;
+}
+
+.message-text {
+  font-size: 28rpx;
+  line-height: 1.6;
+  display: block;
+  word-wrap: break-word;
+}
+
+.message-text.typing {
+  color: #999;
+  font-style: italic;
+}
+
+.message-time {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 8rpx;
+  display: block;
+}
+
+.message-item.assistant .message-time {
+  color: #999;
+}
+
+.chat-input-area {
+  display: flex;
+  padding: 20rpx 30rpx;
+  background: #fff;
+  border-top: 2rpx solid #e8e8e8;
+  gap: 20rpx;
+}
+
+.chat-input {
+  flex: 1;
+  height: 80rpx;
+  padding: 0 30rpx;
+  border: 2rpx solid #e8e8e8;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+}
+
+.send-btn {
+  width: 140rpx;
+  height: 80rpx;
+  line-height: 80rpx;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #fff;
+  border: none;
+  border-radius: 40rpx;
+  font-size: 28rpx;
+}
+
+.send-btn[disabled] {
+  opacity: 0.5;
+}
