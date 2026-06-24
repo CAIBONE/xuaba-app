@@ -1,0 +1,64 @@
+<view class="container">
+  <view class="title">今日学习计划</view>
+
+  <!-- 项目选择器 -->
+  <view class="card project-selector" wx:if="{{projects.length > 1}}">
+    <picker mode="selector" range="{{projects}}" range-key="subject" bindchange="onProjectChange">
+      <view class="picker">
+        <text class="picker-label">当前项目：</text>
+        <text class="picker-value">{{projects[0].subject}} ▼</text>
+      </view>
+    </picker>
+  </view>
+
+  <!-- 加载状态 -->
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">生成学习计划中...</text>
+  </view>
+
+  <!-- 空状态 -->
+  <view wx:elif="{{!dailyPlan || dailyPlan.nodes.length === 0}}" class="empty-state">
+    <text class="empty-icon">📅</text>
+    <text class="empty-text">{{dailyPlan.message || '暂无学习计划'}}</text>
+  </view>
+
+  <!-- 学习计划 -->
+  <view wx:else>
+    <!-- 统计卡片 -->
+    <view class="stats-card card">
+      <view class="stats-grid">
+        <view class="stat-item">
+          <text class="stat-value">{{dailyPlan.total_nodes}}</text>
+          <text class="stat-label">今日任务</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{dailyPlan.total_minutes}}分钟</text>
+          <text class="stat-label">预计用时</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{dailyPlan.progress.pending}}</text>
+          <text class="stat-label">待学习</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 任务列表 -->
+    <view class="task-list">
+      <view class="task-item card" wx:for="{{dailyPlan.nodes}}" wx:key="node_id" bindtap="goToNode" data-node-id="{{item.node_id}}">
+        <view class="task-header">
+          <view class="task-priority priority-{{item.priority}}">
+            {{item.priority === 'high' ? '高' : item.priority === 'medium' ? '中' : '普通'}}
+          </view>
+          <text class="task-status status-{{item.status}}">
+            {{item.status === 'in_progress' ? '学习中' : item.status === 'review' ? '复习' : '待学习'}}
+          </text>
+        </view>
+        <text class="task-title">{{item.title}}</text>
+        <view class="task-footer">
+          <text class="task-time">⏱ {{item.estimated_minutes}}分钟</text>
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

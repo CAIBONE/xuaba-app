@@ -1,3 +1,50 @@
+/* 今日学习卡片 */
+.daily-schedule {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  margin-bottom: var(--spacing-lg);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.daily-schedule:active {
+  transform: scale(0.98);
+}
+
+.schedule-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 12rpx;
+}
+
+.schedule-icon {
+  font-size: 40rpx;
+  margin-right: 12rpx;
+}
+
+.schedule-title {
+  font-size: 32rpx;
+  font-weight: bold;
+}
+
+.schedule-desc {
+  font-size: 26rpx;
+  opacity: 0.9;
+  margin-bottom: 16rpx;
+  display: block;
+}
+
+.schedule-action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.action-text {
+  font-size: 26rpx;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
 .header {
   display: flex;
   justify-content: space-between;

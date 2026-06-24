@@ -68,6 +68,11 @@ const reports = {
   weakNodes: (projectId, threshold = 0.6) => get(`/reports/weak-nodes/${projectId}`, { threshold })
 }
 
+// 学习计划相关
+const schedules = {
+  getDailyPlan: (projectId, dailyMinutes = 60) => get(`/schedules/daily-plan/${projectId}`, { daily_minutes: dailyMinutes })
+}
+
 module.exports = {
   auth,
   projects,
@@ -76,5 +81,6 @@ module.exports = {
   quizzes,
   notes,
   chat,
-  reports
+  reports,
+  schedules
 }

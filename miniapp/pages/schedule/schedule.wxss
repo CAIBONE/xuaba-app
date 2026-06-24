@@ -1,0 +1,132 @@
+/* pages/schedule/schedule.wxss */
+
+.project-selector {
+  margin-bottom: var(--spacing-md);
+}
+
+.picker {
+  display: flex;
+  align-items: center;
+  padding: var(--spacing-sm);
+}
+
+.picker-label {
+  font-size: 28rpx;
+  color: var(--text-secondary);
+  margin-right: 12rpx;
+}
+
+.picker-value {
+  font-size: 28rpx;
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+.stats-card {
+  margin-bottom: var(--spacing-md);
+}
+
+.stats-grid {
+  display: flex;
+  justify-content: space-around;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-value {
+  font-size: 40rpx;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 8rpx;
+}
+
+.stat-label {
+  font-size: 24rpx;
+  color: var(--text-light);
+}
+
+.task-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.task-item {
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.task-item:active {
+  transform: scale(0.98);
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-sm);
+}
+
+.task-priority {
+  display: inline-block;
+  padding: 4rpx 16rpx;
+  border-radius: 12rpx;
+  font-size: 22rpx;
+  font-weight: 500;
+}
+
+.task-priority.priority-high {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.task-priority.priority-medium {
+  background: #e3f2fd;
+  color: #1565c0;
+}
+
+.task-priority.priority-normal {
+  background: #f5f5f5;
+  color: #666;
+}
+
+.task-status {
+  font-size: 24rpx;
+  font-weight: 500;
+}
+
+.task-status.status-pending {
+  color: var(--text-light);
+}
+
+.task-status.status-in_progress {
+  color: var(--primary-color);
+}
+
+.task-status.status-review {
+  color: #ff9800;
+}
+
+.task-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-sm);
+  line-height: 1.5;
+}
+
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-time {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+}

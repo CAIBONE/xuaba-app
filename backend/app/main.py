@@ -63,7 +63,7 @@ async def admin_dashboard():
 
 
 # 注册 API 路由
-from app.api import auth, projects, nodes, contents, quizzes, reports, notes, chat, admin
+from app.api import auth, projects, nodes, contents, quizzes, reports, notes, chat, admin, schedules
 
 app.include_router(auth.router, prefix="/api/auth", tags=["认证"])
 app.include_router(projects.router, prefix="/api/projects", tags=["项目"])
@@ -74,6 +74,7 @@ app.include_router(reports.router, prefix="/api/reports", tags=["报表"])
 app.include_router(notes.router, prefix="/api", tags=["笔记"])
 app.include_router(chat.router, prefix="/api", tags=["对话"])
 app.include_router(admin.router, prefix="/api/admin", tags=["管理后台"])
+app.include_router(schedules.router, prefix="/api/schedules", tags=["学习计划"])
 
 
 if __name__ == "__main__":

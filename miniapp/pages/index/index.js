@@ -65,5 +65,11 @@ Page({
     wx.navigateTo({
       url: `/pages/project/project?id=${id}`
     });
+  },
+
+  goToSchedule() {
+    wx.navigateTo({
+      url: '/pages/schedule/schedule'
+    });
   }
 });

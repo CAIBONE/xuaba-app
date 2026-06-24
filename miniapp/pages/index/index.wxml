@@ -1,4 +1,16 @@
 <view class="container">
+  <!-- 今日学习入口 -->
+  <view class="card daily-schedule" bindtap="goToSchedule" wx:if="{{projects.length > 0}}">
+    <view class="schedule-header">
+      <text class="schedule-icon">📅</text>
+      <text class="schedule-title">今日学习计划</text>
+    </view>
+    <text class="schedule-desc">查看今天的学习任务，合理安排时间</text>
+    <view class="schedule-action">
+      <text class="action-text">立即查看 →</text>
+    </view>
+  </view>
+
   <view class="header">
     <text class="title">我的学习项目</text>
     <view class="btn-primary" bindtap="createProject">+ 新建项目</view>
@@ -44,4 +56,5 @@
     </view>
   </view>
 </view>
+
 
