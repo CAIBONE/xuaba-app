@@ -4,22 +4,44 @@
     <view class="btn-primary" bindtap="createProject">+ 新建项目</view>
   </view>
 
-  <view wx:if="{{loading}}" class="loading">
-    <text>加载中...</text>
+  <view wx:if="{{loading}}" class="loading-container">
+    <view class="loading-spinner"></view>
+    <text class="loading-text">加载中...</text>
   </view>
 
-  <view wx:elif="{{projects.length === 0}}" class="empty">
-    <text>还没有学习项目，点击上方按钮创建一个吧！</text>
+  <view wx:elif="{{projects.length === 0}}" class="empty-state">
+    <text class="empty-icon">📚</text>
+    <text class="empty-text">还没有学习项目\n点击上方按钮创建一个吧！</text>
   </view>
 
   <view wx:else class="project-list">
     <view class="card project-card" wx:for="{{projects}}" wx:key="id" bindtap="goToProject" data-id="{{item.id}}">
-      <view class="project-title">{{item.subject}}</view>
+      <view class="project-header">
+        <text class="project-title">{{item.subject}}</text>
+        <view class="status-tag {{item.status === 'completed' ? 'completed' : 'active'}}">
+          {{item.status === 'completed' ? '已完成' : '进行中'}}
+        </view>
+      </view>
       <view class="project-goal">{{item.goal_description}}</view>
-      <view class="project-meta">
-        <text>节点: {{item.tree_total_nodes || 0}}</text>
-        <text>学时: {{item.tree_total_hours || 0}}h</text>
+      <view wx:if="{{item.baseline_level}}" class="project-baseline">
+        <text class="baseline-label">当前水平：</text>
+        <text class="baseline-value">{{item.baseline_level}}</text>
+      </view>
+      <view class="project-stats">
+        <view class="stat-item">
+          <text class="stat-value">{{item.tree_total_nodes || 0}}</text>
+          <text class="stat-label">知识点</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{item.tree_total_hours || 0}}h</text>
+          <text class="stat-label">预计学时</text>
+        </view>
+        <view class="stat-item">
+          <text class="stat-value">{{item.goal_type === 'exam' ? '考试' : '技能'}}</text>
+          <text class="stat-label">类型</text>
+        </view>
       </view>
     </view>
   </view>
 </view>
+
